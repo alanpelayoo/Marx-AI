@@ -11,7 +11,7 @@ main{
 
 .chatbot-layout{
   height: 80vh;
-  width: 42%;
+  width: 750px;
   border-radius: 20px;
   position: relative;
   overflow: hidden;
@@ -140,3 +140,9 @@ div::-webkit-scrollbar-thumb {
   background-color: #ccc;
 }
 
+@media (max-width: 760px) {
+  .chatbot-layout{
+    
+    width: 90%;
+  }
+}

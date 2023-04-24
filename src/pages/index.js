@@ -103,7 +103,7 @@ function iMessage() {
             type="text"
             placeholder="Type your message here..."
           />
-          <Button className="btn btn-outline-dark"><i className="fa-regular fa-paper-plane fs-4"></i></Button>
+          <Button className="btn btn-outline-dark"><i className="fa-regular fa-paper-plane fs-5"></i></Button>
         </form>
       </div>
     </main>
