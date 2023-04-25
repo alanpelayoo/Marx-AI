@@ -128,6 +128,44 @@ main{
   margin-left: 10px;
 }
 
+/* Loader Animation */
+.line-1-horizontal {
+  --size: 24px;
+  --stroke-width: calc(var(--size) / 6);
+  --color: currentColor;
+  --animation-timing-function: cubic-bezier(0.85, 0, 0.15, 1);
+  --animation-duration: 2s;
+  width: var(--size);
+  height: var(--stroke-width);
+  background-color: var(--color);
+  transform: scaleX(0);
+  transform-origin: center left;
+  animation: var(--animation-timing-function) var(--animation-duration) infinite line-1-horizontal-animation;
+}
+
+@keyframes line-1-horizontal-animation {
+  0% {
+    transform: scaleX(0);
+    transform-origin: center left;
+  }
+
+  50% {
+    transform: scaleX(1);
+    transform-origin: center left;
+  }
+
+  51% {
+    transform: scaleX(1);
+    transform-origin: center right;
+  }
+
+  100% {
+    transform: scaleX(0);
+    transform-origin: center right;
+  }
+}
+/* Loader Animation Ends */
+
 div::-webkit-scrollbar {
   width: 10px;
 }
@@ -142,7 +180,12 @@ div::-webkit-scrollbar-thumb {
 
 @media (max-width: 760px) {
   .chatbot-layout{
-    
     width: 90%;
   }
+  .chat-form button{
+    border-radius: 8px;
+    padding: 10px;
+    margin-left: 10px;
+  }
+
 }

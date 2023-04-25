@@ -1,9 +1,75 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Head from "next/head";
 import axios from "axios";
 import { Button, Container } from "react-bootstrap";
 
 function iMessage() {
+  const [userInput, setUserInput] = useState("");
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const chatBodyRef = useRef(null);
+
+  const handleChange = (event) => {
+    setUserInput(event.target.value);
+  };
+
+  const  handleSubmit = async (e) => {
+    
+    e.preventDefault();
+    const newMessage = { user: true, text: userInput };
+    setMessages((prevMessage) => [...prevMessage, newMessage, { user: false, text: "loading" }])
+    // console.log(messages), if we log messages it logs the state that was present when enetering this fcn.
+
+    setLoading(true)
+    try {
+      const response = await axios.post(
+        '/api/marx', 
+        { 
+          message: userInput 
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      )
+      
+      const botResponse = {
+        user: false,
+        text: response.data.results[0],
+      };
+
+      setMessages((prevMessage) => {
+        prevMessage[prevMessage.length - 1] = botResponse;
+        return  [...prevMessage]
+      })
+
+    } catch (error) {
+      //Handle error for internal server problems
+      console.log(error)
+      const botResponse = {
+        user: false,
+        text: "Oops! Something went wrong.",
+      };
+
+      setMessages((prevMessage) => {
+        prevMessage[prevMessage.length - 1] = botResponse;
+        return  [...prevMessage]
+      })
+
+    }
+
+    
+    setUserInput('')
+    setLoading(false)
+    
+  }
+
+  useEffect(() => {
+    chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
+  }, [messages]);
+
   return (
     <main>
       <Head>
@@ -11,9 +77,7 @@ function iMessage() {
         <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-          integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
-          crossorigin="anonymous"
-          referrerpolicy="no-referrer"
+          
         />
       </Head>
 
@@ -36,7 +100,7 @@ function iMessage() {
           </div>
           <i className="fs-4 fa-solid fa-bars"></i>
         </div>
-        <div className="chat-body">
+        <div className="chat-body" id="chat-body" ref={chatBodyRef}>
           <p className="chat-header">
             Powered by{" "}
             <a href="https://twitter.com/realapcodes" target="_blank">
@@ -46,64 +110,44 @@ function iMessage() {
           </p>
 
           <div className="message-container">
-            <div className="message">
-              <div className="user-message bg-secondary">
-                Hi Marx can you provide me your most important contributions to
-                current society
+            {messages.map((message, index)=> (
+              <div className="message" key={index}>
+                {message.user ? (
+                  <>
+                    <div className="user-message bg-secondary">
+                      {message.text}
+                    </div>
+                    <p className="text-end">You</p>
+                  </>
+                ):(
+                  <>
+                    <div className="bot-message bg-light">
+                      {message.text === "loading" ? (
+                        <div className="line-1-horizontal"></div>
+                      ):(
+                        message.text
+                      )}
+                    </div>
+                    <p className="text-start">Karl</p>
+                  </>
+                )
+                }
+                
               </div>
-              <p className="text-end">You</p>
-            </div>
-
-            <div className="message">
-              <div className="bot-message bg-light">
-                Development of the theory of communism: I am known for my
-                development of the theory of communism, which advocates for a
-                classless society in which the means of production are owned and
-                controlled by the workers. This theory has influenced many
-                socialist and communist movements around the world and continues
-                to be relevant today
-              </div>
-              <p className="text-start">Karl</p>
-            </div>
-
-            <div className="message">
-              <div className="bot-message bg-light">
-                Development of the theory of communism: I am known for my
-                development of the theory of communism, which advocates for a
-                classless society in which the means of production are owned and
-                controlled by the workers. This theory has influenced many
-                socialist and communist movements around the world and continues
-                to be relevant today
-              </div>
-              <p className="text-start">Karl</p>
-            </div>
-
-            <div className="message">
-              <div className="user-message bg-secondary">
-                Hi Marx can you provide me your most important contributions to
-                current society
-              </div>
-              <p className="text-end">You</p>
-            </div>
-
-            <div className="message">
-              <div className="user-message bg-secondary">
-                Hi Marx can you provide me your most important contributions to
-                current society
-              </div>
-              <p className="text-end">You</p>
-            </div>
-
-            
+            ))}
+           
           </div>
         </div>
 
-        <form className="chat-form">
+        <form className="chat-form" onSubmit={handleSubmit}>
           <input
             type="text"
             placeholder="Type your message here..."
+            value={userInput}
+            onChange={handleChange}
+            disabled={loading}
           />
-          <Button className="btn btn-outline-dark"><i className="fa-regular fa-paper-plane fs-5"></i></Button>
+          <Button className="btn btn-outline-dark" type="submit"><i className="fa-regular fa-paper-plane fs-5 "></i></Button>
         </form>
       </div>
     </main>
