@@ -1,12 +1,16 @@
-main{
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
   display: flex;
-  justify-content: center;
   align-items: center;
-  width: 100vw;
-  min-height: 100vh;
+  justify-content: center;
   background-color: #56a1b3;
   background-image: linear-gradient(0deg, #56a1b3 0%, #abbdbd 100%);
-
 }
 
 .chatbot-layout{
