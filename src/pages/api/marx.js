@@ -8,7 +8,7 @@ export default async function handler(req, res) {
                 user: process.env.MINDSDB_USER,
                 password: process.env.MINDSDB_PWD,
             });
-            const query = `SELECT response from mindsdb.marx_v6_chat WHERE text= '${message};'` 
+            const query = `SELECT response from mindsdb.marx_v7_chat WHERE text= '${message};'` 
             const queryResult = await MindsDB.SQL.runQuery(query);
             const results = queryResult.rows.map( element => element.response)
             res.status(200).json({ results })
